@@ -11,6 +11,7 @@ Aplicación de tareas básica construida con:
 La app permite:
 
 - Agregar tareas (con validación para evitar vacías).
+- Agregar tareas con la tecla **Enter**.
 - Marcar tareas como completadas.
 - Eliminar tareas.
 - Guardar y recuperar tareas con `localStorage`.

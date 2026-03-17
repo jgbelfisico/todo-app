@@ -200,6 +200,15 @@ function addTask(taskText) {
   renderTasks();
 }
 
+
+// Permite agregar tareas al presionar Enter en el campo de texto.
+taskInput.addEventListener("keydown", function (event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    todoForm.requestSubmit();
+  }
+});
+
 // Maneja el formulario para agregar tareas.
 todoForm.addEventListener("submit", function (event) {
   event.preventDefault();
