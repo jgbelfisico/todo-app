@@ -178,6 +178,12 @@ body {
   min-width: 0;
 }
 
+.task-text-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
 .task-checkbox {
   width: 18px;
   height: 18px;
@@ -186,6 +192,11 @@ body {
 
 .task-text {
   word-break: break-word;
+}
+
+.task-created-at {
+  color: #64748b;
+  font-size: 0.78rem;
 }
 
 .task-completed .task-text {

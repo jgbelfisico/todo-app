@@ -22,6 +22,7 @@ La app permite:
   - **Pendientes**
   - **Completadas**
 - Ver un contador de tareas pendientes.
+- Mostrar la fecha de creación de cada tarea.
 
 ## Archivos del proyecto
 
@@ -51,4 +52,5 @@ También puedes abrir `index.html` directamente con doble clic.
    - **Pendientes**: solo no completadas.
    - **Completadas**: solo completadas.
 6. Presiona **Eliminar completadas** y confirma que desaparecen todas las completadas.
-7. Recarga la página y confirma que tareas, estado y contador se mantienen.
+7. Verifica que cada tarea muestra su fecha/hora de creación.
+8. Recarga la página y confirma que tareas, estado, contador y fecha se mantienen.

@@ -28,6 +28,25 @@ function createTaskId() {
   return `${Date.now()}-${Math.floor(Math.random() * 100000)}`;
 }
 
+// Devuelve fecha/hora actual en formato ISO para guardar en localStorage.
+function createCreatedAt() {
+  return new Date().toISOString();
+}
+
+// Convierte una fecha ISO a texto legible para mostrar en interfaz.
+function formatCreatedAt(isoDate) {
+  const date = new Date(isoDate);
+
+  if (Number.isNaN(date.getTime())) {
+    return "Fecha desconocida";
+  }
+
+  return date.toLocaleString("es-ES", {
+    dateStyle: "short",
+    timeStyle: "short",
+  });
+}
+
 // Guarda el estado completo en localStorage.
 function saveTasks() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
@@ -45,6 +64,7 @@ function sanitizeTasks(rawTasks) {
         id: typeof item.id === "string" && item.id ? item.id : `loaded-${index}`,
         text: typeof item.text === "string" ? item.text.trim() : "",
         completed: Boolean(item.completed),
+        createdAt: typeof item.createdAt === "string" && item.createdAt ? item.createdAt : createCreatedAt(),
       };
     })
     .filter(function (item) {
@@ -150,9 +170,16 @@ function createTaskItem(task) {
   checkbox.className = "task-checkbox";
   checkbox.checked = task.completed;
 
+  const textGroup = document.createElement("div");
+  textGroup.className = "task-text-group";
+
   const text = document.createElement("span");
   text.className = "task-text";
   text.textContent = task.text;
+
+  const createdAt = document.createElement("small");
+  createdAt.className = "task-created-at";
+  createdAt.textContent = `Creada: ${formatCreatedAt(task.createdAt)}`;
 
   const deleteButton = document.createElement("button");
   deleteButton.type = "button";
@@ -176,8 +203,11 @@ function createTaskItem(task) {
     renderTasks();
   });
 
+  textGroup.appendChild(text);
+  textGroup.appendChild(createdAt);
+
   content.appendChild(checkbox);
-  content.appendChild(text);
+  content.appendChild(textGroup);
   listItem.appendChild(content);
   listItem.appendChild(deleteButton);
 
@@ -208,6 +238,7 @@ function addTask(taskText) {
     id: createTaskId(),
     text: taskText,
     completed: false,
+    createdAt: createCreatedAt(),
   };
 
   tasks.push(newTask);
