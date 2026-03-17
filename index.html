@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>To-Do App</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-container" aria-label="Aplicación de tareas">
+      <header class="app-header">
+        <h1>Mi To-Do App</h1>
+        <p>Escribe una tarea y agrégala a tu lista.</p>
+      </header>
+
+      <section class="todo-panel" aria-label="Panel de tareas">
+        <form class="todo-form" aria-label="Formulario para agregar tarea">
+          <label for="task-input" class="visually-hidden">Nueva tarea</label>
+          <input
+            id="task-input"
+            name="task"
+            type="text"
+            placeholder="Ejemplo: Estudiar JavaScript"
+            autocomplete="off"
+          />
+          <button type="submit">Agregar tarea</button>
+        </form>
+
+        <p id="pending-counter" class="pending-counter" aria-live="polite"></p>
+
+        <section class="todo-list-section" aria-label="Lista de tareas">
+          <div class="list-header">
+            <h2>Tareas</h2>
+            <div class="task-filters" role="group" aria-label="Filtros de tareas">
+              <button type="button" class="filter-button is-active" data-filter="all">Todas</button>
+              <button type="button" class="filter-button" data-filter="pending">Pendientes</button>
+              <button type="button" class="filter-button" data-filter="completed">Completadas</button>
+            </div>
+          </div>
+          <ul id="task-list" class="task-list"></ul>
+        </section>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
