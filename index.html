@@ -27,7 +27,14 @@
         </form>
 
         <section class="todo-list-section" aria-label="Lista de tareas">
-          <h2>Tareas</h2>
+          <div class="list-header">
+            <h2>Tareas</h2>
+            <div class="task-filters" role="group" aria-label="Filtros de tareas">
+              <button type="button" class="filter-button is-active" data-filter="all">Todas</button>
+              <button type="button" class="filter-button" data-filter="pending">Pendientes</button>
+              <button type="button" class="filter-button" data-filter="completed">Completadas</button>
+            </div>
+          </div>
           <ul id="task-list" class="task-list"></ul>
         </section>
       </section>

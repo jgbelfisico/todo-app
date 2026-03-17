@@ -76,9 +76,44 @@ body {
   margin-top: 1rem;
 }
 
+.list-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
 .todo-list-section h2 {
-  margin: 0 0 0.75rem;
+  margin: 0;
   font-size: 1.1rem;
+}
+
+.task-filters {
+  display: flex;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.filter-button {
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+  border-radius: 999px;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.filter-button:hover {
+  background: #f1f5f9;
+}
+
+.filter-button.is-active {
+  border-color: #2563eb;
+  background: #2563eb;
+  color: #ffffff;
 }
 
 .task-list {

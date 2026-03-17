@@ -4,13 +4,18 @@
 const todoForm = document.querySelector(".todo-form");
 const taskInput = document.querySelector("#task-input");
 const taskList = document.querySelector("#task-list");
+const filterButtons = document.querySelectorAll(".filter-button");
 
-// Clave de localStorage y texto para estado vacío.
+// Clave de localStorage, texto para estado vacío y filtros disponibles.
 const STORAGE_KEY = "todo.tasks";
-const EMPTY_MESSAGE = "Aún no hay tareas. Agrega la primera.";
+const EMPTY_MESSAGE = "Aún no hay tareas en este filtro.";
+const FILTER_ALL = "all";
+const FILTER_PENDING = "pending";
+const FILTER_COMPLETED = "completed";
 
 // Estado en memoria de la app.
 let tasks = [];
+let currentFilter = FILTER_ALL;
 
 // Crea un id único por tarea.
 function createTaskId() {
@@ -62,12 +67,36 @@ function loadTasks() {
   }
 }
 
-// Dibuja un mensaje simple cuando no hay tareas.
+// Dibuja un mensaje simple cuando no hay tareas visibles.
 function renderEmptyState() {
   const emptyItem = document.createElement("li");
   emptyItem.className = "task-list-empty";
   emptyItem.textContent = EMPTY_MESSAGE;
   taskList.appendChild(emptyItem);
+}
+
+// Devuelve solo tareas según el filtro activo.
+function getFilteredTasks() {
+  if (currentFilter === FILTER_PENDING) {
+    return tasks.filter(function (task) {
+      return !task.completed;
+    });
+  }
+
+  if (currentFilter === FILTER_COMPLETED) {
+    return tasks.filter(function (task) {
+      return task.completed;
+    });
+  }
+
+  return tasks;
+}
+
+// Actualiza visualmente el botón de filtro activo.
+function updateActiveFilterButton() {
+  filterButtons.forEach(function (button) {
+    button.classList.toggle("is-active", button.dataset.filter === currentFilter);
+  });
 }
 
 // Crea un elemento visual de tarea y conecta eventos de completar/eliminar.
@@ -99,8 +128,8 @@ function createTaskItem(task) {
   // Marca/desmarca tarea, actualiza estado y guarda.
   checkbox.addEventListener("change", function () {
     task.completed = checkbox.checked;
-    listItem.classList.toggle("task-completed", task.completed);
     saveTasks();
+    renderTasks();
   });
 
   // Elimina tarea del estado, guarda y vuelve a renderizar.
@@ -121,16 +150,18 @@ function createTaskItem(task) {
   return listItem;
 }
 
-// Dibuja toda la lista según el estado actual en memoria.
+// Dibuja la lista según tareas + filtro activo.
 function renderTasks() {
+  const visibleTasks = getFilteredTasks();
+
   taskList.innerHTML = "";
 
-  if (tasks.length === 0) {
+  if (visibleTasks.length === 0) {
     renderEmptyState();
     return;
   }
 
-  tasks.forEach(function (task) {
+  visibleTasks.forEach(function (task) {
     taskList.appendChild(createTaskItem(task));
   });
 }
@@ -167,6 +198,16 @@ todoForm.addEventListener("submit", function (event) {
   taskInput.focus();
 });
 
+// Maneja cambios de filtro.
+filterButtons.forEach(function (button) {
+  button.addEventListener("click", function () {
+    currentFilter = button.dataset.filter;
+    updateActiveFilterButton();
+    renderTasks();
+  });
+});
+
 // Inicialización: leer localStorage y renderizar.
 loadTasks();
+updateActiveFilterButton();
 renderTasks();
