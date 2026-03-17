@@ -122,6 +122,28 @@ body {
   color: #ffffff;
 }
 
+.list-actions {
+  margin-bottom: 0.75rem;
+}
+
+.clear-completed-button {
+  border: 1px solid #94a3b8;
+  background: #ffffff;
+  color: #334155;
+  border-radius: 8px;
+  padding: 0.4rem 0.75rem;
+  cursor: pointer;
+}
+
+.clear-completed-button:hover {
+  background: #f1f5f9;
+}
+
+.clear-completed-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
 .task-list {
   margin: 0;
   padding: 0;

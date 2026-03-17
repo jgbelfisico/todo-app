@@ -6,6 +6,7 @@ const taskInput = document.querySelector("#task-input");
 const taskList = document.querySelector("#task-list");
 const filterButtons = document.querySelectorAll(".filter-button");
 const pendingCounter = document.querySelector("#pending-counter");
+const clearCompletedButton = document.querySelector("#clear-completed-button");
 
 // Clave de localStorage, texto para estado vacío y filtros disponibles.
 const STORAGE_KEY = "todo.tasks";
@@ -100,6 +101,13 @@ function getPendingTasksCount() {
   }).length;
 }
 
+// Calcula cuántas tareas completadas existen.
+function getCompletedTasksCount() {
+  return tasks.filter(function (task) {
+    return task.completed;
+  }).length;
+}
+
 // Actualiza el texto del contador de pendientes.
 function renderPendingCounter() {
   const pendingCount = getPendingTasksCount();
@@ -110,6 +118,12 @@ function renderPendingCounter() {
   }
 
   pendingCounter.textContent = `Te quedan ${pendingCount} tareas pendientes.`;
+}
+
+// Muestra u oculta el botón para eliminar completadas.
+function renderClearCompletedButton() {
+  const completedCount = getCompletedTasksCount();
+  clearCompletedButton.disabled = completedCount === 0;
 }
 
 // Actualiza visualmente el botón de filtro activo.
@@ -185,6 +199,7 @@ function renderTasks() {
   }
 
   renderPendingCounter();
+  renderClearCompletedButton();
 }
 
 // Crea una tarea nueva, guarda y re-renderiza.
@@ -200,6 +215,15 @@ function addTask(taskText) {
   renderTasks();
 }
 
+// Elimina todas las tareas completadas.
+function clearCompletedTasks() {
+  tasks = tasks.filter(function (task) {
+    return !task.completed;
+  });
+
+  saveTasks();
+  renderTasks();
+}
 
 // Permite agregar tareas al presionar Enter en el campo de texto.
 taskInput.addEventListener("keydown", function (event) {
@@ -235,6 +259,11 @@ filterButtons.forEach(function (button) {
     updateActiveFilterButton();
     renderTasks();
   });
+});
+
+// Maneja la acción de eliminar todas las tareas completadas.
+clearCompletedButton.addEventListener("click", function () {
+  clearCompletedTasks();
 });
 
 // Inicialización: leer localStorage y renderizar.

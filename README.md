@@ -14,6 +14,7 @@ La app permite:
 - Agregar tareas con la tecla **Enter**.
 - Marcar tareas como completadas.
 - Eliminar tareas.
+- Eliminar todas las tareas completadas con un botón.
 - Guardar y recuperar tareas con `localStorage`.
 - Mantener el estado de completadas al recargar la página.
 - Filtrar tareas por estado:
@@ -49,4 +50,5 @@ También puedes abrir `index.html` directamente con doble clic.
    - **Todas**: muestra todo.
    - **Pendientes**: solo no completadas.
    - **Completadas**: solo completadas.
-6. Recarga la página y confirma que tareas, estado y contador se mantienen.
+6. Presiona **Eliminar completadas** y confirma que desaparecen todas las completadas.
+7. Recarga la página y confirma que tareas, estado y contador se mantienen.
