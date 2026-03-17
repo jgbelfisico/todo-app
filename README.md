@@ -1,6 +1,6 @@
-# To-Do App (fase 1)
+# To-Do App (fase 2)
 
-Proyecto base para una aplicación de tareas (To-Do) construida con:
+Aplicación de tareas básica construida con:
 
 - HTML
 - CSS
@@ -8,14 +8,25 @@ Proyecto base para una aplicación de tareas (To-Do) construida con:
 
 ## Estado actual
 
-Esta fase prepara la estructura inicial del proyecto:
+Esta fase incluye una interfaz visual simple, limpia y centrada:
 
-- `index.html`: estructura principal de la página y punto de montaje de la app.
-- `styles.css`: estilos base para una interfaz limpia y legible.
-- `script.js`: punto de entrada de JavaScript para implementar la lógica en fases siguientes.
+- Título de la aplicación.
+- Campo de texto para escribir tareas.
+- Botón para agregar tarea.
+- Lista visible para mostrar tareas.
+
+Archivos principales:
+
+- `index.html`: estructura de la interfaz.
+- `styles.css`: estilos (layout, espaciado y apariencia).
+- `script.js`: punto de entrada JavaScript (sin lógica completa aún).
 
 ## Cómo abrirlo localmente
 
-1. Abre esta carpeta en tu editor.
-2. Haz doble clic en `index.html` para abrirlo en el navegador.
-   - Alternativa: usa una extensión tipo "Live Server" para recarga automática.
+1. Abre este repositorio en tu editor.
+2. Ejecuta un servidor local simple (opcional) con:
+   - `python3 -m http.server 8000`
+3. Abre en el navegador:
+   - `http://localhost:8000`
+
+También puedes abrir `index.html` directamente con doble clic.

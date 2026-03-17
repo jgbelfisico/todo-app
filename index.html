@@ -8,13 +8,30 @@
   </head>
   <body>
     <main class="app-container" aria-label="Aplicación de tareas">
-      <h1>To-Do App</h1>
-      <p class="app-description">
-        Estructura base lista para implementar funciones en las siguientes fases.
-      </p>
+      <header class="app-header">
+        <h1>Mi To-Do App</h1>
+        <p>Escribe una tarea y agrégala a tu lista.</p>
+      </header>
 
-      <section class="todo-shell" aria-label="Contenedor principal de tareas">
-        <!-- En fases siguientes se agregará aquí el formulario y la lista de tareas -->
+      <section class="todo-panel" aria-label="Panel de tareas">
+        <form class="todo-form" aria-label="Formulario para agregar tarea">
+          <label for="task-input" class="visually-hidden">Nueva tarea</label>
+          <input
+            id="task-input"
+            name="task"
+            type="text"
+            placeholder="Ejemplo: Estudiar JavaScript"
+            autocomplete="off"
+          />
+          <button type="submit">Agregar tarea</button>
+        </form>
+
+        <section class="todo-list-section" aria-label="Lista de tareas">
+          <h2>Tareas</h2>
+          <ul id="task-list" class="task-list">
+            <li class="task-list-empty">Aún no hay tareas. Agrega la primera.</li>
+          </ul>
+        </section>
       </section>
     </main>
 
