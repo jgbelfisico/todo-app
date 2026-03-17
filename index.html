@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>To-Do App</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-container" aria-label="Aplicación de tareas">
+      <header class="app-header">
+        <h1>Mi To-Do App</h1>
+        <p>Escribe una tarea y agrégala a tu lista.</p>
+      </header>
+
+      <section class="todo-panel" aria-label="Panel de tareas">
+        <form class="todo-form" aria-label="Formulario para agregar tarea">
+          <label for="task-input" class="visually-hidden">Nueva tarea</label>
+          <input
+            id="task-input"
+            name="task"
+            type="text"
+            placeholder="Ejemplo: Estudiar JavaScript"
+            autocomplete="off"
+          />
+          <button type="submit">Agregar tarea</button>
+        </form>
+
+        <section class="todo-list-section" aria-label="Lista de tareas">
+          <h2>Tareas</h2>
+          <ul id="task-list" class="task-list">
+            <li class="task-list-empty">Aún no hay tareas. Agrega la primera.</li>
+          </ul>
+        </section>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
