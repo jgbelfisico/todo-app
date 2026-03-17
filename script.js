@@ -8,16 +8,27 @@ const filterButtons = document.querySelectorAll(".filter-button");
 const pendingCounter = document.querySelector("#pending-counter");
 const clearCompletedButton = document.querySelector("#clear-completed-button");
 
-// Clave de localStorage, texto para estado vacío y filtros disponibles.
+// Clave de localStorage y textos de interfaz.
 const STORAGE_KEY = "todo.tasks";
 const EMPTY_MESSAGE = "Aún no hay tareas en este filtro.";
-const FILTER_ALL = "all";
-const FILTER_PENDING = "pending";
-const FILTER_COMPLETED = "completed";
+const UNKNOWN_DATE_TEXT = "Fecha desconocida";
+
+// Filtros disponibles para mostrar tareas.
+const FILTERS = {
+  all: function () {
+    return true;
+  },
+  pending: function (task) {
+    return !task.completed;
+  },
+  completed: function (task) {
+    return task.completed;
+  },
+};
 
 // Estado en memoria de la app.
 let tasks = [];
-let currentFilter = FILTER_ALL;
+let currentFilter = "all";
 
 // Crea un id único por tarea.
 function createTaskId() {
@@ -38,7 +49,7 @@ function formatCreatedAt(isoDate) {
   const date = new Date(isoDate);
 
   if (Number.isNaN(date.getTime())) {
-    return "Fecha desconocida";
+    return UNKNOWN_DATE_TEXT;
   }
 
   return date.toLocaleString("es-ES", {
@@ -47,9 +58,17 @@ function formatCreatedAt(isoDate) {
   });
 }
 
-// Guarda el estado completo en localStorage.
-function saveTasks() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+// Normaliza una tarea para evitar errores por datos incompletos.
+function sanitizeTask(rawTask, index) {
+  return {
+    id: typeof rawTask.id === "string" && rawTask.id ? rawTask.id : `loaded-${index}`,
+    text: typeof rawTask.text === "string" ? rawTask.text.trim() : "",
+    completed: Boolean(rawTask.completed),
+    createdAt:
+      typeof rawTask.createdAt === "string" && rawTask.createdAt
+        ? rawTask.createdAt
+        : createCreatedAt(),
+  };
 }
 
 // Convierte cualquier dato cargado en un formato seguro y predecible.
@@ -60,16 +79,16 @@ function sanitizeTasks(rawTasks) {
 
   return rawTasks
     .map(function (item, index) {
-      return {
-        id: typeof item.id === "string" && item.id ? item.id : `loaded-${index}`,
-        text: typeof item.text === "string" ? item.text.trim() : "",
-        completed: Boolean(item.completed),
-        createdAt: typeof item.createdAt === "string" && item.createdAt ? item.createdAt : createCreatedAt(),
-      };
+      return sanitizeTask(item, index);
     })
     .filter(function (item) {
       return item.text !== "";
     });
+}
+
+// Guarda el estado completo en localStorage.
+function saveTasks() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
 }
 
 // Carga tareas desde localStorage al iniciar la app.
@@ -82,8 +101,7 @@ function loadTasks() {
   }
 
   try {
-    const parsedTasks = JSON.parse(savedTasks);
-    tasks = sanitizeTasks(parsedTasks);
+    tasks = sanitizeTasks(JSON.parse(savedTasks));
   } catch (error) {
     tasks = [];
   }
@@ -97,41 +115,33 @@ function renderEmptyState() {
   taskList.appendChild(emptyItem);
 }
 
-// Devuelve solo tareas según el filtro activo.
+// Devuelve tareas según el filtro activo.
 function getFilteredTasks() {
-  if (currentFilter === FILTER_PENDING) {
-    return tasks.filter(function (task) {
-      return !task.completed;
-    });
-  }
+  const matchesFilter = FILTERS[currentFilter] || FILTERS.all;
 
-  if (currentFilter === FILTER_COMPLETED) {
-    return tasks.filter(function (task) {
-      return task.completed;
-    });
-  }
-
-  return tasks;
-}
-
-// Calcula cuántas tareas pendientes quedan.
-function getPendingTasksCount() {
   return tasks.filter(function (task) {
-    return !task.completed;
-  }).length;
+    return matchesFilter(task);
+  });
 }
 
-// Calcula cuántas tareas completadas existen.
-function getCompletedTasksCount() {
-  return tasks.filter(function (task) {
-    return task.completed;
-  }).length;
+// Calcula cantidades para contador de pendientes y botón de completadas.
+function getTaskCounts() {
+  return tasks.reduce(
+    function (counts, task) {
+      if (task.completed) {
+        counts.completed += 1;
+      } else {
+        counts.pending += 1;
+      }
+
+      return counts;
+    },
+    { pending: 0, completed: 0 },
+  );
 }
 
-// Actualiza el texto del contador de pendientes.
-function renderPendingCounter() {
-  const pendingCount = getPendingTasksCount();
-
+// Actualiza contador de tareas pendientes.
+function renderPendingCounter(pendingCount) {
   if (pendingCount === 1) {
     pendingCounter.textContent = "Te queda 1 tarea pendiente.";
     return;
@@ -140,9 +150,8 @@ function renderPendingCounter() {
   pendingCounter.textContent = `Te quedan ${pendingCount} tareas pendientes.`;
 }
 
-// Muestra u oculta el botón para eliminar completadas.
-function renderClearCompletedButton() {
-  const completedCount = getCompletedTasksCount();
+// Actualiza disponibilidad del botón para eliminar completadas.
+function renderClearCompletedButton(completedCount) {
   clearCompletedButton.disabled = completedCount === 0;
 }
 
@@ -186,11 +195,10 @@ function createTaskItem(task) {
   deleteButton.className = "task-delete-button";
   deleteButton.textContent = "Eliminar";
 
-  // Marca/desmarca tarea, actualiza estado y guarda.
+  // Marca/desmarca tarea, guarda y vuelve a renderizar.
   checkbox.addEventListener("change", function () {
     task.completed = checkbox.checked;
-    saveTasks();
-    renderTasks();
+    saveAndRender();
   });
 
   // Elimina tarea del estado, guarda y vuelve a renderizar.
@@ -199,8 +207,7 @@ function createTaskItem(task) {
       return currentTask.id !== task.id;
     });
 
-    saveTasks();
-    renderTasks();
+    saveAndRender();
   });
 
   textGroup.appendChild(text);
@@ -217,6 +224,7 @@ function createTaskItem(task) {
 // Dibuja la lista según tareas + filtro activo.
 function renderTasks() {
   const visibleTasks = getFilteredTasks();
+  const taskCounts = getTaskCounts();
 
   taskList.innerHTML = "";
 
@@ -228,22 +236,26 @@ function renderTasks() {
     });
   }
 
-  renderPendingCounter();
-  renderClearCompletedButton();
+  renderPendingCounter(taskCounts.pending);
+  renderClearCompletedButton(taskCounts.completed);
+}
+
+// Guarda en localStorage y repinta la interfaz.
+function saveAndRender() {
+  saveTasks();
+  renderTasks();
 }
 
 // Crea una tarea nueva, guarda y re-renderiza.
 function addTask(taskText) {
-  const newTask = {
+  tasks.push({
     id: createTaskId(),
     text: taskText,
     completed: false,
     createdAt: createCreatedAt(),
-  };
+  });
 
-  tasks.push(newTask);
-  saveTasks();
-  renderTasks();
+  saveAndRender();
 }
 
 // Elimina todas las tareas completadas.
@@ -252,8 +264,7 @@ function clearCompletedTasks() {
     return !task.completed;
   });
 
-  saveTasks();
-  renderTasks();
+  saveAndRender();
 }
 
 // Permite agregar tareas al presionar Enter en el campo de texto.
