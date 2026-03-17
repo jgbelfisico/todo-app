@@ -1,4 +1,4 @@
-# To-Do App (fase 3)
+# To-Do App (fase 4)
 
 Aplicación de tareas básica construida con:
 
@@ -11,16 +11,16 @@ Aplicación de tareas básica construida con:
 Esta fase incluye:
 
 - Interfaz visual simple, limpia y centrada.
-- Campo de texto para escribir tareas.
-- Botón para agregar tareas.
-- Lista visible donde se agregan nuevas tareas.
+- Agregar tareas desde un campo de texto.
 - Validación para no permitir tareas vacías.
+- Marcar tareas como completadas.
+- Eliminar tareas.
 
 Archivos principales:
 
 - `index.html`: estructura de la interfaz.
-- `styles.css`: estilos (layout, espaciado y apariencia).
-- `script.js`: lógica de fase 3 para agregar tareas.
+- `styles.css`: estilos visuales y estado de tarea completada.
+- `script.js`: lógica de agregar, completar y eliminar tareas.
 
 ## Cómo abrirlo localmente
 
