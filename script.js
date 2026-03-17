@@ -5,15 +5,44 @@ const todoForm = document.querySelector(".todo-form");
 const taskInput = document.querySelector("#task-input");
 const taskList = document.querySelector("#task-list");
 
-// Clave única para guardar y leer tareas desde localStorage.
+// Clave de localStorage y texto para estado vacío.
 const STORAGE_KEY = "todo.tasks";
+const EMPTY_MESSAGE = "Aún no hay tareas. Agrega la primera.";
 
-// Estado en memoria de la aplicación.
+// Estado en memoria de la app.
 let tasks = [];
 
-// Guarda el arreglo de tareas en localStorage.
+// Crea un id único por tarea.
+function createTaskId() {
+  if (window.crypto && window.crypto.randomUUID) {
+    return window.crypto.randomUUID();
+  }
+
+  return `${Date.now()}-${Math.floor(Math.random() * 100000)}`;
+}
+
+// Guarda el estado completo en localStorage.
 function saveTasks() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+}
+
+// Convierte cualquier dato cargado en un formato seguro y predecible.
+function sanitizeTasks(rawTasks) {
+  if (!Array.isArray(rawTasks)) {
+    return [];
+  }
+
+  return rawTasks
+    .map(function (item, index) {
+      return {
+        id: typeof item.id === "string" && item.id ? item.id : `loaded-${index}`,
+        text: typeof item.text === "string" ? item.text.trim() : "",
+        completed: Boolean(item.completed),
+      };
+    })
+    .filter(function (item) {
+      return item.text !== "";
+    });
 }
 
 // Carga tareas desde localStorage al iniciar la app.
@@ -26,17 +55,18 @@ function loadTasks() {
   }
 
   try {
-    tasks = JSON.parse(savedTasks);
+    const parsedTasks = JSON.parse(savedTasks);
+    tasks = sanitizeTasks(parsedTasks);
   } catch (error) {
     tasks = [];
   }
 }
 
-// Muestra un mensaje simple cuando no hay tareas.
+// Dibuja un mensaje simple cuando no hay tareas.
 function renderEmptyState() {
   const emptyItem = document.createElement("li");
   emptyItem.className = "task-list-empty";
-  emptyItem.textContent = "Aún no hay tareas. Agrega la primera.";
+  emptyItem.textContent = EMPTY_MESSAGE;
   taskList.appendChild(emptyItem);
 }
 
@@ -66,17 +96,17 @@ function createTaskItem(task) {
   deleteButton.className = "task-delete-button";
   deleteButton.textContent = "Eliminar";
 
-  // Cambia el estado de completada y lo guarda.
+  // Marca/desmarca tarea, actualiza estado y guarda.
   checkbox.addEventListener("change", function () {
     task.completed = checkbox.checked;
     listItem.classList.toggle("task-completed", task.completed);
     saveTasks();
   });
 
-  // Elimina la tarea del estado y vuelve a guardar.
+  // Elimina tarea del estado, guarda y vuelve a renderizar.
   deleteButton.addEventListener("click", function () {
-    tasks = tasks.filter(function (item) {
-      return item.id !== task.id;
+    tasks = tasks.filter(function (currentTask) {
+      return currentTask.id !== task.id;
     });
 
     saveTasks();
@@ -91,7 +121,7 @@ function createTaskItem(task) {
   return listItem;
 }
 
-// Dibuja toda la lista de tareas según el estado actual.
+// Dibuja toda la lista según el estado actual en memoria.
 function renderTasks() {
   taskList.innerHTML = "";
 
@@ -101,15 +131,14 @@ function renderTasks() {
   }
 
   tasks.forEach(function (task) {
-    const taskItem = createTaskItem(task);
-    taskList.appendChild(taskItem);
+    taskList.appendChild(createTaskItem(task));
   });
 }
 
-// Agrega una nueva tarea al estado, la guarda y vuelve a renderizar.
+// Crea una tarea nueva, guarda y re-renderiza.
 function addTask(taskText) {
   const newTask = {
-    id: Date.now().toString(),
+    id: createTaskId(),
     text: taskText,
     completed: false,
   };
@@ -119,13 +148,13 @@ function addTask(taskText) {
   renderTasks();
 }
 
-// Maneja el formulario para crear tareas.
+// Maneja el formulario para agregar tareas.
 todoForm.addEventListener("submit", function (event) {
   event.preventDefault();
 
   const taskText = taskInput.value.trim();
 
-  // Evita agregar tareas vacías o con solo espacios.
+  // Evita tareas vacías o con solo espacios.
   if (!taskText) {
     taskInput.focus();
     return;
@@ -133,11 +162,11 @@ todoForm.addEventListener("submit", function (event) {
 
   addTask(taskText);
 
-  // Limpia el campo y deja el cursor listo.
+  // Limpia el campo y deja el cursor listo para seguir.
   taskInput.value = "";
   taskInput.focus();
 });
 
-// Inicializa la app leyendo almacenamiento y renderizando la lista.
+// Inicialización: leer localStorage y renderizar.
 loadTasks();
 renderTasks();

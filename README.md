@@ -1,4 +1,4 @@
-# To-Do App (fase 5)
+# To-Do App (fase 6: revisión final)
 
 Aplicación de tareas básica construida con:
 
@@ -8,19 +8,20 @@ Aplicación de tareas básica construida con:
 
 ## Estado actual
 
-Esta fase incluye:
+La app ya permite:
 
-- Interfaz visual simple, limpia y centrada.
-- Agregar tareas con validación de campos vacíos.
+- Agregar tareas (con validación para evitar vacías).
 - Marcar tareas como completadas.
 - Eliminar tareas.
-- Persistencia con `localStorage` (incluye estado de completadas).
+- Guardar y recuperar tareas con `localStorage`.
+- Mantener el estado de completadas al recargar la página.
 
-Archivos principales:
+## Archivos del proyecto
 
-- `index.html`: estructura de la interfaz.
-- `styles.css`: estilos visuales y estado de tarea completada.
-- `script.js`: lógica de agregar, completar, eliminar y persistir tareas.
+- `index.html`: estructura de la interfaz (título, formulario y lista).
+- `styles.css`: estilos visuales de la app y del estado "completada".
+- `script.js`: lógica principal (estado en memoria, renderizado y persistencia).
+- `README.md`: documentación general y guía rápida de uso.
 
 ## Cómo abrirlo localmente
 
@@ -31,3 +32,11 @@ Archivos principales:
    - `http://localhost:8000`
 
 También puedes abrir `index.html` directamente con doble clic.
+
+## Qué probar manualmente
+
+1. Escribe una tarea y presiona **Agregar tarea**.
+2. Intenta agregar una tarea vacía (no debe agregarse).
+3. Marca una tarea como completada (debe verse tachada).
+4. Elimina una tarea.
+5. Recarga la página y verifica que tareas y estados se mantengan.
