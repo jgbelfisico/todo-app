@@ -5,22 +5,49 @@ const todoForm = document.querySelector(".todo-form");
 const taskInput = document.querySelector("#task-input");
 const taskList = document.querySelector("#task-list");
 
-// Muestra el mensaje de lista vacía si ya no quedan tareas.
-function showEmptyMessageIfNeeded() {
-  const hasTasks = taskList.querySelector(".task-item");
+// Clave única para guardar y leer tareas desde localStorage.
+const STORAGE_KEY = "todo.tasks";
 
-  if (!hasTasks) {
-    const emptyItem = document.createElement("li");
-    emptyItem.className = "task-list-empty";
-    emptyItem.textContent = "Aún no hay tareas. Agrega la primera.";
-    taskList.appendChild(emptyItem);
+// Estado en memoria de la aplicación.
+let tasks = [];
+
+// Guarda el arreglo de tareas en localStorage.
+function saveTasks() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+}
+
+// Carga tareas desde localStorage al iniciar la app.
+function loadTasks() {
+  const savedTasks = localStorage.getItem(STORAGE_KEY);
+
+  if (!savedTasks) {
+    tasks = [];
+    return;
+  }
+
+  try {
+    tasks = JSON.parse(savedTasks);
+  } catch (error) {
+    tasks = [];
   }
 }
 
-// Crea la estructura visual de una tarea con acciones de completar y eliminar.
-function createTaskItem(taskText) {
+// Muestra un mensaje simple cuando no hay tareas.
+function renderEmptyState() {
+  const emptyItem = document.createElement("li");
+  emptyItem.className = "task-list-empty";
+  emptyItem.textContent = "Aún no hay tareas. Agrega la primera.";
+  taskList.appendChild(emptyItem);
+}
+
+// Crea un elemento visual de tarea y conecta eventos de completar/eliminar.
+function createTaskItem(task) {
   const listItem = document.createElement("li");
   listItem.className = "task-item";
+
+  if (task.completed) {
+    listItem.classList.add("task-completed");
+  }
 
   const content = document.createElement("div");
   content.className = "task-content";
@@ -28,25 +55,32 @@ function createTaskItem(taskText) {
   const checkbox = document.createElement("input");
   checkbox.type = "checkbox";
   checkbox.className = "task-checkbox";
+  checkbox.checked = task.completed;
 
   const text = document.createElement("span");
   text.className = "task-text";
-  text.textContent = taskText;
+  text.textContent = task.text;
 
   const deleteButton = document.createElement("button");
   deleteButton.type = "button";
   deleteButton.className = "task-delete-button";
   deleteButton.textContent = "Eliminar";
 
-  // Marca o desmarca visualmente la tarea como completada.
+  // Cambia el estado de completada y lo guarda.
   checkbox.addEventListener("change", function () {
-    listItem.classList.toggle("task-completed", checkbox.checked);
+    task.completed = checkbox.checked;
+    listItem.classList.toggle("task-completed", task.completed);
+    saveTasks();
   });
 
-  // Elimina la tarea seleccionada de la lista.
+  // Elimina la tarea del estado y vuelve a guardar.
   deleteButton.addEventListener("click", function () {
-    listItem.remove();
-    showEmptyMessageIfNeeded();
+    tasks = tasks.filter(function (item) {
+      return item.id !== task.id;
+    });
+
+    saveTasks();
+    renderTasks();
   });
 
   content.appendChild(checkbox);
@@ -57,34 +91,53 @@ function createTaskItem(taskText) {
   return listItem;
 }
 
-// Agrega una tarea al listado visible.
-function addTaskToList(taskText) {
-  const emptyItem = taskList.querySelector(".task-list-empty");
+// Dibuja toda la lista de tareas según el estado actual.
+function renderTasks() {
+  taskList.innerHTML = "";
 
-  // Si existe el mensaje de lista vacía, se remueve al agregar una tarea.
-  if (emptyItem) {
-    emptyItem.remove();
+  if (tasks.length === 0) {
+    renderEmptyState();
+    return;
   }
 
-  const newTaskItem = createTaskItem(taskText);
-  taskList.appendChild(newTaskItem);
+  tasks.forEach(function (task) {
+    const taskItem = createTaskItem(task);
+    taskList.appendChild(taskItem);
+  });
 }
 
-// Maneja el envío del formulario al hacer clic en "Agregar tarea".
+// Agrega una nueva tarea al estado, la guarda y vuelve a renderizar.
+function addTask(taskText) {
+  const newTask = {
+    id: Date.now().toString(),
+    text: taskText,
+    completed: false,
+  };
+
+  tasks.push(newTask);
+  saveTasks();
+  renderTasks();
+}
+
+// Maneja el formulario para crear tareas.
 todoForm.addEventListener("submit", function (event) {
   event.preventDefault();
 
   const taskText = taskInput.value.trim();
 
-  // Evita agregar tareas vacías o solo con espacios.
+  // Evita agregar tareas vacías o con solo espacios.
   if (!taskText) {
     taskInput.focus();
     return;
   }
 
-  addTaskToList(taskText);
+  addTask(taskText);
 
-  // Limpia el campo y deja el cursor listo para la siguiente tarea.
+  // Limpia el campo y deja el cursor listo.
   taskInput.value = "";
   taskInput.focus();
 });
+
+// Inicializa la app leyendo almacenamiento y renderizando la lista.
+loadTasks();
+renderTasks();
