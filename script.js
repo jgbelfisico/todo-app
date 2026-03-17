@@ -5,6 +5,7 @@ const todoForm = document.querySelector(".todo-form");
 const taskInput = document.querySelector("#task-input");
 const taskList = document.querySelector("#task-list");
 const filterButtons = document.querySelectorAll(".filter-button");
+const pendingCounter = document.querySelector("#pending-counter");
 
 // Clave de localStorage, texto para estado vacío y filtros disponibles.
 const STORAGE_KEY = "todo.tasks";
@@ -92,6 +93,25 @@ function getFilteredTasks() {
   return tasks;
 }
 
+// Calcula cuántas tareas pendientes quedan.
+function getPendingTasksCount() {
+  return tasks.filter(function (task) {
+    return !task.completed;
+  }).length;
+}
+
+// Actualiza el texto del contador de pendientes.
+function renderPendingCounter() {
+  const pendingCount = getPendingTasksCount();
+
+  if (pendingCount === 1) {
+    pendingCounter.textContent = "Te queda 1 tarea pendiente.";
+    return;
+  }
+
+  pendingCounter.textContent = `Te quedan ${pendingCount} tareas pendientes.`;
+}
+
 // Actualiza visualmente el botón de filtro activo.
 function updateActiveFilterButton() {
   filterButtons.forEach(function (button) {
@@ -158,12 +178,13 @@ function renderTasks() {
 
   if (visibleTasks.length === 0) {
     renderEmptyState();
-    return;
+  } else {
+    visibleTasks.forEach(function (task) {
+      taskList.appendChild(createTaskItem(task));
+    });
   }
 
-  visibleTasks.forEach(function (task) {
-    taskList.appendChild(createTaskItem(task));
-  });
+  renderPendingCounter();
 }
 
 // Crea una tarea nueva, guarda y re-renderiza.

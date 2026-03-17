@@ -72,6 +72,12 @@ body {
   background: #1d4ed8;
 }
 
+.pending-counter {
+  margin: 0.85rem 0 0;
+  color: #334155;
+  font-weight: 600;
+}
+
 .todo-list-section {
   margin-top: 1rem;
 }

@@ -1,4 +1,4 @@
-# To-Do App (fase final + filtros)
+# To-Do App (fase final + filtros + contador)
 
 Aplicación de tareas básica construida con:
 
@@ -19,12 +19,13 @@ La app permite:
   - **Todas**
   - **Pendientes**
   - **Completadas**
+- Ver un contador de tareas pendientes.
 
 ## Archivos del proyecto
 
-- `index.html`: estructura de la interfaz (formulario, filtros y lista).
+- `index.html`: estructura de la interfaz (formulario, contador, filtros y lista).
 - `styles.css`: estilos visuales de la app y del estado "completada".
-- `script.js`: lógica principal (estado, renderizado, filtros y persistencia).
+- `script.js`: lógica principal (estado, renderizado, filtros, contador y persistencia).
 - `README.md`: documentación general y guía rápida de uso.
 
 ## Cómo abrirlo localmente
@@ -40,11 +41,11 @@ También puedes abrir `index.html` directamente con doble clic.
 ## Qué probar manualmente
 
 1. Escribe una tarea y presiona **Agregar tarea**.
-2. Intenta agregar una tarea vacía (no debe agregarse).
-3. Marca una tarea como completada (debe verse tachada).
-4. Cambia filtros y verifica resultados:
+2. Confirma que el contador de pendientes aumenta.
+3. Marca una tarea como completada y confirma que el contador baja.
+4. Elimina una tarea y confirma que el contador se actualiza.
+5. Cambia filtros y verifica resultados:
    - **Todas**: muestra todo.
    - **Pendientes**: solo no completadas.
    - **Completadas**: solo completadas.
-5. Elimina una tarea y verifica que desaparece.
-6. Recarga la página y confirma que tareas y estado se mantienen.
+6. Recarga la página y confirma que tareas, estado y contador se mantienen.
